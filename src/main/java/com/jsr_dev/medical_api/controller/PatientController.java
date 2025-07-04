@@ -1,5 +1,7 @@
 package com.jsr_dev.medical_api.controller;
 
+import com.jsr_dev.medical_api.patient.PatientMapper;
+import com.jsr_dev.medical_api.patient.PatientRepository;
 import com.jsr_dev.medical_api.patient.PatientRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,8 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/patients")
 public class PatientController {
+
+    private final PatientRepository repository;
+
+    public PatientController(PatientRepository repository) {
+        this.repository = repository;
+    }
+
     @PostMapping
     public void addPatient(@RequestBody PatientRequest patientRequest) {
-        System.out.println(patientRequest);
+        repository.save(PatientMapper.mapToPatient(patientRequest));
     }
 }
