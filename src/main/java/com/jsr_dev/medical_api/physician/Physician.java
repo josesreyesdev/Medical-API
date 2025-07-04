@@ -7,12 +7,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Table(name = "physicians")
+@Entity(name = "Physician")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Table(name = "physicians")
-@Entity(name = "Physician")
 public class Physician {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
