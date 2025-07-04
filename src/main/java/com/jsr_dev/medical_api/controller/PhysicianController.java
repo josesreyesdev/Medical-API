@@ -4,7 +4,7 @@ import com.jsr_dev.medical_api.physician.PhysicianRequest;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/physicians")
+@RequestMapping("/physicians")
 public class PhysicianController {
 
     @PostMapping

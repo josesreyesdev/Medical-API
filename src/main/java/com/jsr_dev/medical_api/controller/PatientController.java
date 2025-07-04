@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/patients")
+@RequestMapping("/patients")
 public class PatientController {
     @PostMapping
     public void addPatient(@RequestBody PatientRequest patientRequest) {

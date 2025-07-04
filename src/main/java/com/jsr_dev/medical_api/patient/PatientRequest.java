@@ -6,7 +6,7 @@ public record PatientRequest(
         String name,
         String email,
         String identityDocument,
-        String phone,
+        String phoneNumber,
         AddressRequest addressRequest
 ) {
 }
