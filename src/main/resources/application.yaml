@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: medical-api
+
+  # database
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:3306/medical_db
+    username: ${DB_USER_MY}
+    password: ${DB_PASSWORD}
+
+# path
+server:
+  servlet:
+    context-path: /api
