@@ -3,6 +3,7 @@ package com.jsr_dev.medical_api.controller;
 import com.jsr_dev.medical_api.patient.PatientMapper;
 import com.jsr_dev.medical_api.patient.PatientRepository;
 import com.jsr_dev.medical_api.patient.PatientRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ public class PatientController {
         this.repository = repository;
     }
 
+    @Transactional
     @PostMapping
     public void addPatient(@RequestBody PatientRequest patientRequest) {
         repository.save(PatientMapper.mapToPatient(patientRequest));

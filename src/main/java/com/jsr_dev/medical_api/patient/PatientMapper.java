@@ -7,6 +7,7 @@ public class PatientMapper {
         return new Patient(
                 null,
                 patientRequest.name(),
+                patientRequest.avatar(),
                 patientRequest.email(),
                 patientRequest.identityDocument(),
                 patientRequest.phoneNumber(),
