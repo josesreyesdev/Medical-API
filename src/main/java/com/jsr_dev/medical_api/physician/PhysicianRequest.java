@@ -30,7 +30,8 @@ public record PhysicianRequest(
         Specialty specialty,
 
         @JsonAlias("address")
-        @NotNull(message = "Address must no be null") @Valid
+        @NotNull(message = "Address must no be null")
+        @Valid
         AddressRequest addressRequest
 ) {
 }
