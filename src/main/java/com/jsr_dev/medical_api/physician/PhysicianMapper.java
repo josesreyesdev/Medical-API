@@ -15,4 +15,17 @@ public class PhysicianMapper {
                 AddressMapper.mapToAddress(physicianRequest.addressRequest())
         );
     }
+
+    public static PhysicianResponse mapToPhysicianResponse(Physician p) {
+        return new PhysicianResponse(
+                p.getId(),
+                p.getName(),
+                p.getAvatar(),
+                p.getEmail(),
+                p.getPhoneNumber(),
+                p.getSpecialty(),
+                p.getDocument(),
+                AddressMapper.mapToAddressResponse(p.getAddress())
+        );
+    }
 }
