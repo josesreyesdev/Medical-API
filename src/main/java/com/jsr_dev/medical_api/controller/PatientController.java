@@ -1,12 +1,12 @@
 package com.jsr_dev.medical_api.controller;
 
-import com.jsr_dev.medical_api.patient.PatientMapper;
-import com.jsr_dev.medical_api.patient.PatientRepository;
-import com.jsr_dev.medical_api.patient.PatientRequest;
-import com.jsr_dev.medical_api.patient.PatientResponse;
+import com.jsr_dev.medical_api.patient.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +16,20 @@ public class PatientController {
 
     private final PatientRepository repository;
 
-    public PatientController(PatientRepository repository) {
+    // Convert Page to PageModel
+    private final PagedResourcesAssembler<PatientResponse> pagedResourcesAssembler;
+
+    // Convert PhysicianResponse to EntityModel
+    private final PatientResponseModelAssembler patientResponseModelAssembler;
+
+    public PatientController(
+            PatientRepository repository,
+            PagedResourcesAssembler<PatientResponse> pagedResourcesAssembler,
+            PatientResponseModelAssembler patientResponseModelAssembler
+    ) {
         this.repository = repository;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.patientResponseModelAssembler = patientResponseModelAssembler;
     }
 
     @Transactional
@@ -27,8 +39,9 @@ public class PatientController {
     }
 
     @GetMapping
-    public Page<PatientResponse> getAllPatients(Pageable pageable) {
-        return repository.findAll(pageable)
+    public PagedModel<EntityModel<PatientResponse>> getAllPatients(Pageable pageable) {
+        Page<PatientResponse> page = repository.findAll(pageable)
                 .map(PatientMapper::mapToPatientResponse);
+        return pagedResourcesAssembler.toModel(page, patientResponseModelAssembler);
     }
 }

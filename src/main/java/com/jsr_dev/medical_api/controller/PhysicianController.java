@@ -1,13 +1,13 @@
 package com.jsr_dev.medical_api.controller;
 
-import com.jsr_dev.medical_api.physician.PhysicianMapper;
-import com.jsr_dev.medical_api.physician.PhysicianRepository;
-import com.jsr_dev.medical_api.physician.PhysicianRequest;
-import com.jsr_dev.medical_api.physician.PhysicianResponse;
+import com.jsr_dev.medical_api.physician.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +17,20 @@ public class PhysicianController {
 
     private final PhysicianRepository repository;
 
-    public PhysicianController(PhysicianRepository repository) {
+    // Convert Page to PageModel
+    private final PagedResourcesAssembler<PhysicianResponse> pagedResourcesAssembler;
+
+    // Convert PhysicianResponse to EntityModel
+    private final PhysicianResponseModelAssembler physicianResponseModelAssembler;
+
+    public PhysicianController(
+            PhysicianRepository repository,
+            PagedResourcesAssembler<PhysicianResponse> pagedResourcesAssembler,
+            PhysicianResponseModelAssembler physicianResponseModelAssembler
+    ) {
         this.repository = repository;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.physicianResponseModelAssembler = physicianResponseModelAssembler;
     }
 
     @Transactional
@@ -28,11 +40,12 @@ public class PhysicianController {
     }
 
     @GetMapping
-    public Page<PhysicianResponse> getAllPhysicians(
+    public PagedModel<EntityModel<PhysicianResponse>> getAllPhysicians(
             @PageableDefault(size = 15, sort = {"name"})
             Pageable pageable
     ) {
-        return repository.findAll(pageable)
+        Page<PhysicianResponse> page = repository.findAll(pageable)
                 .map(PhysicianMapper::mapToPhysicianResponse);
+        return pagedResourcesAssembler.toModel(page, physicianResponseModelAssembler);
     }
 }
