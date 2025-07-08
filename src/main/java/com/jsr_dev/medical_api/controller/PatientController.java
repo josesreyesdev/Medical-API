@@ -5,11 +5,10 @@ import com.jsr_dev.medical_api.patient.PatientRepository;
 import com.jsr_dev.medical_api.patient.PatientRequest;
 import com.jsr_dev.medical_api.patient.PatientResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/patients")
@@ -28,9 +27,8 @@ public class PatientController {
     }
 
     @GetMapping
-    public List<PatientResponse> getAllPatients() {
-        return repository.findAll().stream()
-                .map(PatientMapper::mapToPatientResponse)
-                .collect(Collectors.toList());
+    public Page<PatientResponse> getAllPatients(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(PatientMapper::mapToPatientResponse);
     }
 }
