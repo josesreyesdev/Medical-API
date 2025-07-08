@@ -5,11 +5,11 @@ import com.jsr_dev.medical_api.physician.PhysicianRepository;
 import com.jsr_dev.medical_api.physician.PhysicianRequest;
 import com.jsr_dev.medical_api.physician.PhysicianResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/physicians")
@@ -28,9 +28,8 @@ public class PhysicianController {
     }
 
     @GetMapping
-    public List<PhysicianResponse> getAllPhysicians() {
-        return repository.findAll().stream()
-                .map(PhysicianMapper::mapToPhysicianResponse)
-                .collect(Collectors.toList());
+    public Page<PhysicianResponse> getAllPhysicians(@PageableDefault(size = 15) Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(PhysicianMapper::mapToPhysicianResponse);
     }
 }
