@@ -1,17 +1,17 @@
 package com.jsr_dev.medical_api.address;
 
 public class AddressMapper {
-    public static Address mapToAddress(AddressRequest addressRequest) {
+    public static Address mapToAddress(AddressRequest a) {
         return new Address(
-                addressRequest.street(),
-                addressRequest.stateOrProvince(),
-                addressRequest.municipalityOrDelegation(),
-                addressRequest.city(),
-                addressRequest.zipCode(),
-                addressRequest.country(),
-                addressRequest.externalNumber(),
-                addressRequest.internalNumber(),
-                addressRequest.complement()
+                a.street(),
+                a.stateOrProvince(),
+                a.municipalityOrDelegation(),
+                a.city(),
+                a.zipCode(),
+                a.country(),
+                a.externalNumber(),
+                a.internalNumber(),
+                a.complement()
         );
     }
 
