@@ -28,7 +28,10 @@ public class PhysicianController {
     }
 
     @GetMapping
-    public Page<PhysicianResponse> getAllPhysicians(@PageableDefault(size = 15) Pageable pageable) {
+    public Page<PhysicianResponse> getAllPhysicians(
+            @PageableDefault(size = 15, sort = {"name"})
+            Pageable pageable
+    ) {
         return repository.findAll(pageable)
                 .map(PhysicianMapper::mapToPhysicianResponse);
     }

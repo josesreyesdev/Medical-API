@@ -9,7 +9,18 @@ spring:
     username: ${DB_USER_MY}
     password: ${DB_PASSWORD}
 
+  # show stack trace and format sql details
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+
 # path
 server:
   servlet:
     context-path: /api
+
+  # prevent the exception stack tracer
+  error:
+    include-stacktrace: never
