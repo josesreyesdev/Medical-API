@@ -2,6 +2,7 @@ package com.jsr_dev.medical_api.patient;
 
 import com.jsr_dev.medical_api.address.Address;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,4 +24,14 @@ public class Patient {
     private String phoneNumber;
     @Embedded
     private Address address;
+
+    public void update(UpdatePatientRequest updateData) {
+        if (updateData.name() != null) this.name = updateData.name();
+        if (updateData.avatar() != null) this.avatar = updateData.avatar();
+        if (updateData.email() != null) this.email = updateData.email();
+        if (updateData.phoneNumber() != null) this.phoneNumber = updateData.phoneNumber();
+        if (updateData.addAddressRequest() != null) {
+            this.address.update(updateData.addAddressRequest());
+        }
+    }
 }

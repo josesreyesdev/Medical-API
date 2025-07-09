@@ -44,4 +44,14 @@ public class PatientController {
                 .map(PatientMapper::mapToPatientResponse);
         return pagedResourcesAssembler.toModel(page, patientResponseModelAssembler);
     }
+
+    @Transactional
+    @PutMapping
+    public PatientResponse updatePatient(@RequestBody @Valid UpdatePatientRequest updateData) {
+        Patient patient = repository.getReferenceById(updateData.id());
+
+        patient.update(updateData);
+
+        return PatientMapper.mapToPatientResponse(patient);
+    }
 }
