@@ -19,4 +19,16 @@ public class Address {
     private String externalNumber;
     private String internalNumber;
     private String complement;
+
+    public void update(AddAddressRequest update) {
+        if (update.street() != null) this.street = update.street();
+        if (update.stateOrProvince() != null) this.stateOrProvince = update.stateOrProvince();
+        if (update.municipalityOrDelegation() != null) this.municipalityOrDelegation = update.municipalityOrDelegation();
+        if (update.city() != null) this.city = update.city();
+        if (update.zipCode() != null) this.zipCode = update.zipCode();
+        if (update.country() != null) this.country = update.country();
+        if (update.externalNumber() != null) this.externalNumber = update.externalNumber();
+        if (update.internalNumber() != null) this.internalNumber = update.internalNumber();
+        if (update.complement() != null) this.complement = update.complement();
+    }
 }

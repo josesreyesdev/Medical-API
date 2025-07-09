@@ -1,9 +1,10 @@
 package com.jsr_dev.medical_api.physician;
 
 import com.jsr_dev.medical_api.address.AddressMapper;
+import jakarta.validation.Valid;
 
 public class PhysicianMapper {
-    public static Physician mapToPhysician(PhysicianRequest p) {
+    public static Physician mapToPhysician(AddPhysicianRequest p) {
         return new Physician(
                 null,
                 p.name(),
@@ -12,7 +13,7 @@ public class PhysicianMapper {
                 p.phoneNumber(),
                 p.document(),
                 p.specialty(),
-                AddressMapper.mapToAddress(p.addressRequest())
+                AddressMapper.mapToAddress(p.addAddressRequest())
         );
     }
 

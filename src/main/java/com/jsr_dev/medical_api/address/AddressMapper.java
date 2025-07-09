@@ -1,7 +1,7 @@
 package com.jsr_dev.medical_api.address;
 
 public class AddressMapper {
-    public static Address mapToAddress(AddressRequest a) {
+    public static Address mapToAddress(AddAddressRequest a) {
         return new Address(
                 a.street(),
                 a.stateOrProvince(),
