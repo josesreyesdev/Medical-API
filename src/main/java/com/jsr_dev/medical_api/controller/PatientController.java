@@ -34,7 +34,7 @@ public class PatientController {
 
     @Transactional
     @PostMapping
-    public void addPatient(@RequestBody @Valid PatientRequest patientRequest) {
+    public void addPatient(@RequestBody @Valid AddPatientRequest patientRequest) {
         repository.save(PatientMapper.mapToPatient(patientRequest));
     }
 
