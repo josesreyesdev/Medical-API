@@ -34,14 +34,31 @@ public class PatientController {
 
     @Transactional
     @PostMapping
-    public void addPatient(@RequestBody @Valid PatientRequest patientRequest) {
+    public void addPatient(@RequestBody @Valid AddPatientRequest patientRequest) {
         repository.save(PatientMapper.mapToPatient(patientRequest));
     }
 
     @GetMapping
     public PagedModel<EntityModel<PatientResponse>> getAllPatients(Pageable pageable) {
-        Page<PatientResponse> page = repository.findAll(pageable)
+        Page<PatientResponse> page = repository.findAllByActiveTrue(pageable)
                 .map(PatientMapper::mapToPatientResponse);
         return pagedResourcesAssembler.toModel(page, patientResponseModelAssembler);
+    }
+
+    @Transactional
+    @PutMapping
+    public PatientResponse updatePatient(@RequestBody @Valid UpdatePatientRequest updateData) {
+        Patient patient = repository.getReferenceById(updateData.id());
+
+        patient.update(updateData);
+
+        return PatientMapper.mapToPatientResponse(patient);
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public void deletePatient(@PathVariable Long id) {
+        Patient patient = repository.getReferenceById(id);
+        patient.deactivate();
     }
 }

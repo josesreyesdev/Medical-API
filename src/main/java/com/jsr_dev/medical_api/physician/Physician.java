@@ -25,4 +25,19 @@ public class Physician {
     private Specialty specialty;
     @Embedded
     private Address address;
+    private Boolean active;
+
+
+    public void update(UpdatePhysicianRequest update) {
+        if (update.name() != null) this.name = update.name();
+        if (update.avatar() != null) this.avatar = update.avatar();
+        if (update.phoneNumber() != null) this.phoneNumber = update.phoneNumber();
+        if (update.addAddressRequest() != null) {
+            this.address.update(update.addAddressRequest());
+        }
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
 }

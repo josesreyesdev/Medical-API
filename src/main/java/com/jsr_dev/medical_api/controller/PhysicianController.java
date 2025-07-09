@@ -35,7 +35,7 @@ public class PhysicianController {
 
     @Transactional
     @PostMapping
-    public void addPhysician(@RequestBody @Valid PhysicianRequest physicianRequest) {
+    public void addPhysician(@RequestBody @Valid AddPhysicianRequest physicianRequest) {
         repository.save(PhysicianMapper.mapToPhysician(physicianRequest));
     }
 
@@ -44,8 +44,24 @@ public class PhysicianController {
             @PageableDefault(size = 15, sort = {"name"})
             Pageable pageable
     ) {
-        Page<PhysicianResponse> page = repository.findAll(pageable)
+        Page<PhysicianResponse> page = repository.findAllByActiveTrue(pageable)
                 .map(PhysicianMapper::mapToPhysicianResponse);
         return pagedResourcesAssembler.toModel(page, physicianResponseModelAssembler);
+    }
+
+    @Transactional
+    @PutMapping
+    public PhysicianResponse updatePhysician(@RequestBody @Valid UpdatePhysicianRequest update) {
+        Physician physician = repository.getReferenceById(update.id());
+        physician.update(update);
+
+        return PhysicianMapper.mapToPhysicianResponse(physician);
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public void deletePhysician(@PathVariable Long id) {
+        Physician physician = repository.getReferenceById(id);
+        physician.deactivate();
     }
 }

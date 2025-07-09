@@ -1,14 +1,14 @@
-package com.jsr_dev.medical_api.patient;
+package com.jsr_dev.medical_api.physician;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.jsr_dev.medical_api.address.AddressRequest;
+import com.jsr_dev.medical_api.address.AddAddressRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record PatientRequest(
+public record AddPhysicianRequest(
         @NotBlank(message = "Name must not be empty.")
         String name,
 
@@ -18,17 +18,20 @@ public record PatientRequest(
         @Email(message = "Email must be a valid format.")
         String email,
 
-        @NotBlank(message = "Identity document must not be empty.")
-        @Pattern(regexp = "\\d{7,9}", message = "Identity document must contain between 7 and 9 digits.")
-        String identityDocument,
-
         @JsonAlias({"phoneNumber", "phone_number"})
         @NotBlank(message = "Phone number must not be empty.")
         String phoneNumber,
 
-        @JsonAlias({"address", "addressRequest"})
-        @NotNull(message = "Address must not be null.")
+        @NotBlank(message = "Document must not be empty.")
+        @Pattern(regexp = "\\d{7,9}", message = "Document must contain between 7 and 9 digits.")
+        String document,
+
+        @NotNull(message = "Specialty must not be null")
+        Specialty specialty,
+
+        @JsonAlias("address")
+        @NotNull(message = "Address must no be null")
         @Valid
-        AddressRequest addressRequest
+        AddAddressRequest addAddressRequest
 ) {
 }
