@@ -44,7 +44,7 @@ public class PhysicianController {
             @PageableDefault(size = 15, sort = {"name"})
             Pageable pageable
     ) {
-        Page<PhysicianResponse> page = repository.findAll(pageable)
+        Page<PhysicianResponse> page = repository.findAllByActiveTrue(pageable)
                 .map(PhysicianMapper::mapToPhysicianResponse);
         return pagedResourcesAssembler.toModel(page, physicianResponseModelAssembler);
     }
@@ -56,5 +56,12 @@ public class PhysicianController {
         physician.update(update);
 
         return PhysicianMapper.mapToPhysicianResponse(physician);
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public void deletePhysician(@PathVariable Long id) {
+        Physician physician = repository.getReferenceById(id);
+        physician.deactivate();
     }
 }

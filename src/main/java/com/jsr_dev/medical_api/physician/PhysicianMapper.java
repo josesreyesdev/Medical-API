@@ -13,7 +13,8 @@ public class PhysicianMapper {
                 p.phoneNumber(),
                 p.document(),
                 p.specialty(),
-                AddressMapper.mapToAddress(p.addAddressRequest())
+                AddressMapper.mapToAddress(p.addAddressRequest()),
+                true
         );
     }
 
