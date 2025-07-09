@@ -1,7 +1,6 @@
 package com.jsr_dev.medical_api.physician;
 
 import com.jsr_dev.medical_api.address.AddressMapper;
-import jakarta.validation.Valid;
 
 public class PhysicianMapper {
     public static Physician mapToPhysician(AddPhysicianRequest p) {
