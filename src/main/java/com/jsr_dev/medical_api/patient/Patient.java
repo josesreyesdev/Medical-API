@@ -2,7 +2,6 @@ package com.jsr_dev.medical_api.patient;
 
 import com.jsr_dev.medical_api.address.Address;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "patients")
 @Entity(name = "Patient")
 public class Patient {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String avatar;
@@ -24,6 +24,7 @@ public class Patient {
     private String phoneNumber;
     @Embedded
     private Address address;
+    private Boolean active;
 
     public void update(UpdatePatientRequest updateData) {
         if (updateData.name() != null) this.name = updateData.name();
@@ -33,5 +34,9 @@ public class Patient {
         if (updateData.addAddressRequest() != null) {
             this.address.update(updateData.addAddressRequest());
         }
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 }

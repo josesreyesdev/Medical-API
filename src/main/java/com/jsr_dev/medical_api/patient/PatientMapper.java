@@ -11,7 +11,8 @@ public class PatientMapper {
                 p.email(),
                 p.identityDocument(),
                 p.phoneNumber(),
-                AddressMapper.mapToAddress(p.addAddressRequest())
+                AddressMapper.mapToAddress(p.addAddressRequest()),
+                true
         );
     }
 

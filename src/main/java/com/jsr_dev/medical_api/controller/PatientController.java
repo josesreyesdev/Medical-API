@@ -40,7 +40,7 @@ public class PatientController {
 
     @GetMapping
     public PagedModel<EntityModel<PatientResponse>> getAllPatients(Pageable pageable) {
-        Page<PatientResponse> page = repository.findAll(pageable)
+        Page<PatientResponse> page = repository.findAllByActiveTrue(pageable)
                 .map(PatientMapper::mapToPatientResponse);
         return pagedResourcesAssembler.toModel(page, patientResponseModelAssembler);
     }
@@ -53,5 +53,12 @@ public class PatientController {
         patient.update(updateData);
 
         return PatientMapper.mapToPatientResponse(patient);
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public void deletePatient(@PathVariable Long id) {
+        Patient patient = repository.getReferenceById(id);
+        patient.deactivate();
     }
 }
