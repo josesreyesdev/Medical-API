@@ -59,6 +59,13 @@ public class PatientController {
         return ResponseEntity.ok(pageModel);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientResponse> getPatientById(@PathVariable Long id) {
+        Patient patient = repository.getReferenceById(id);
+        patient.deactivate();
+        return ResponseEntity.ok(PatientMapper.mapToPatientResponse(patient)); // 200
+    }
+
     @Transactional
     @PutMapping
     public ResponseEntity<PatientResponse> updatePatient(@RequestBody @Valid UpdatePatientRequest updateData) {
