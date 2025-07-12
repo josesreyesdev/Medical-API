@@ -1,6 +1,6 @@
 package com.jsr_dev.medical_api.controller;
 
-import com.jsr_dev.medical_api.physician.*;
+import com.jsr_dev.medical_api.domain.physician.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +8,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/physicians")
@@ -35,33 +39,53 @@ public class PhysicianController {
 
     @Transactional
     @PostMapping
-    public void addPhysician(@RequestBody @Valid AddPhysicianRequest physicianRequest) {
-        repository.save(PhysicianMapper.mapToPhysician(physicianRequest));
+    public ResponseEntity<PhysicianResponse> addPhysician(
+            @RequestBody @Valid AddPhysicianRequest physicianRequest,
+            UriComponentsBuilder uriBuilder
+    ) {
+        Physician physician = repository.save(PhysicianMapper.mapToPhysician(physicianRequest));
+
+        URI uri = uriBuilder.path("/physicians/{id}").buildAndExpand(physician.getId()).toUri();
+        PhysicianResponse physicianResponse = PhysicianMapper.mapToPhysicianResponse(physician);
+
+        return ResponseEntity.created(uri).body(physicianResponse); // 201
     }
 
     @GetMapping
-    public PagedModel<EntityModel<PhysicianResponse>> getAllPhysicians(
+    public ResponseEntity<PagedModel<EntityModel<PhysicianResponse>>> getAllPhysicians(
             @PageableDefault(size = 15, sort = {"name"})
             Pageable pageable
     ) {
         Page<PhysicianResponse> page = repository.findAllByActiveTrue(pageable)
                 .map(PhysicianMapper::mapToPhysicianResponse);
-        return pagedResourcesAssembler.toModel(page, physicianResponseModelAssembler);
+
+        PagedModel<EntityModel<PhysicianResponse>> pagedModel = pagedResourcesAssembler.toModel(page, physicianResponseModelAssembler);
+        return ResponseEntity.ok(pagedModel);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PhysicianResponse> getPhysicianById(@PathVariable Long id) {
+        Physician physician = repository.getReferenceById(id);
+        physician.deactivate();
+
+        return ResponseEntity.ok(PhysicianMapper.mapToPhysicianResponse(physician)); // 200
     }
 
     @Transactional
     @PutMapping
-    public PhysicianResponse updatePhysician(@RequestBody @Valid UpdatePhysicianRequest update) {
+    public ResponseEntity<PhysicianResponse> updatePhysician(@RequestBody @Valid UpdatePhysicianRequest update) {
         Physician physician = repository.getReferenceById(update.id());
         physician.update(update);
 
-        return PhysicianMapper.mapToPhysicianResponse(physician);
+        return ResponseEntity.ok(PhysicianMapper.mapToPhysicianResponse(physician));
     }
 
     @Transactional
     @DeleteMapping("/{id}")
-    public void deletePhysician(@PathVariable Long id) {
+    public ResponseEntity<Boolean> deletePhysician(@PathVariable Long id) {
         Physician physician = repository.getReferenceById(id);
         physician.deactivate();
+
+        return ResponseEntity.noContent().build(); // 204
     }
 }

@@ -1,7 +1,7 @@
-package com.jsr_dev.medical_api.physician;
+package com.jsr_dev.medical_api.domain.physician;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.jsr_dev.medical_api.address.AddAddressRequest;
+import com.jsr_dev.medical_api.domain.address.AddAddressRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

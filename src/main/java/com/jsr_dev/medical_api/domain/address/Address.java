@@ -1,4 +1,4 @@
-package com.jsr_dev.medical_api.address;
+package com.jsr_dev.medical_api.domain.address;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.jsr_dev.medical_api.patient;
+package com.jsr_dev.medical_api.domain.patient;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.hateoas.EntityModel;

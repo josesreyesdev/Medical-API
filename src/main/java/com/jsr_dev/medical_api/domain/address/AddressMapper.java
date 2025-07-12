@@ -1,4 +1,4 @@
-package com.jsr_dev.medical_api.address;
+package com.jsr_dev.medical_api.domain.address;
 
 public class AddressMapper {
     public static Address mapToAddress(AddAddressRequest a) {

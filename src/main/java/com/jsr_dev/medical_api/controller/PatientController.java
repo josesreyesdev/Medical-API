@@ -1,14 +1,18 @@
 package com.jsr_dev.medical_api.controller;
 
-import com.jsr_dev.medical_api.patient.*;
+import com.jsr_dev.medical_api.domain.patient.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/patients")
@@ -34,31 +38,49 @@ public class PatientController {
 
     @Transactional
     @PostMapping
-    public void addPatient(@RequestBody @Valid AddPatientRequest patientRequest) {
-        repository.save(PatientMapper.mapToPatient(patientRequest));
+    public ResponseEntity<PatientResponse> addPatient(
+            @RequestBody @Valid AddPatientRequest patientRequest,
+            UriComponentsBuilder uriBuilder
+    ) {
+        Patient patient = repository.save(PatientMapper.mapToPatient(patientRequest));
+
+        URI uri = uriBuilder.path("/patients/{id}").buildAndExpand(patient.getId()).toUri();
+        PatientResponse patientResponse = PatientMapper.mapToPatientResponse(patient);
+
+        return ResponseEntity.created(uri).body(patientResponse);
     }
 
     @GetMapping
-    public PagedModel<EntityModel<PatientResponse>> getAllPatients(Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<PatientResponse>>> getAllPatients(Pageable pageable) {
         Page<PatientResponse> page = repository.findAllByActiveTrue(pageable)
                 .map(PatientMapper::mapToPatientResponse);
-        return pagedResourcesAssembler.toModel(page, patientResponseModelAssembler);
+
+        PagedModel<EntityModel<PatientResponse>> pageModel = pagedResourcesAssembler.toModel(page, patientResponseModelAssembler);
+        return ResponseEntity.ok(pageModel);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientResponse> getPatientById(@PathVariable Long id) {
+        Patient patient = repository.getReferenceById(id);
+        patient.deactivate();
+        return ResponseEntity.ok(PatientMapper.mapToPatientResponse(patient)); // 200
     }
 
     @Transactional
     @PutMapping
-    public PatientResponse updatePatient(@RequestBody @Valid UpdatePatientRequest updateData) {
+    public ResponseEntity<PatientResponse> updatePatient(@RequestBody @Valid UpdatePatientRequest updateData) {
         Patient patient = repository.getReferenceById(updateData.id());
 
         patient.update(updateData);
 
-        return PatientMapper.mapToPatientResponse(patient);
+        return ResponseEntity.ok(PatientMapper.mapToPatientResponse(patient)); // 200
     }
 
     @Transactional
     @DeleteMapping("/{id}")
-    public void deletePatient(@PathVariable Long id) {
+    public ResponseEntity<Boolean> deletePatient(@PathVariable Long id) {
         Patient patient = repository.getReferenceById(id);
         patient.deactivate();
+        return ResponseEntity.noContent().build(); // 204
     }
 }
