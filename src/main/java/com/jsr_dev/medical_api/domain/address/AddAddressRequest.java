@@ -1,4 +1,4 @@
-package com.jsr_dev.medical_api.address;
+package com.jsr_dev.medical_api.domain.address;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotBlank;

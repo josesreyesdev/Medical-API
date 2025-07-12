@@ -1,6 +1,6 @@
-package com.jsr_dev.medical_api.patient;
+package com.jsr_dev.medical_api.domain.patient;
 
-import com.jsr_dev.medical_api.address.Address;
+import com.jsr_dev.medical_api.domain.address.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

@@ -1,4 +1,4 @@
-package com.jsr_dev.medical_api.physician;
+package com.jsr_dev.medical_api.domain.physician;
 
 import java.text.Normalizer;
 import java.util.Arrays;

@@ -1,29 +1,31 @@
-package com.jsr_dev.medical_api.patient;
+package com.jsr_dev.medical_api.domain.physician;
 
-import com.jsr_dev.medical_api.address.AddressMapper;
+import com.jsr_dev.medical_api.domain.address.AddressMapper;
 
-public class PatientMapper {
-    public static Patient mapToPatient(AddPatientRequest p) {
-        return new Patient(
+public class PhysicianMapper {
+    public static Physician mapToPhysician(AddPhysicianRequest p) {
+        return new Physician(
                 null,
                 p.name(),
                 p.avatar(),
                 p.email(),
-                p.identityDocument(),
                 p.phoneNumber(),
+                p.document(),
+                p.specialty(),
                 AddressMapper.mapToAddress(p.addAddressRequest()),
                 true
         );
     }
 
-    public static PatientResponse mapToPatientResponse(Patient p) {
-        return new PatientResponse(
+    public static PhysicianResponse mapToPhysicianResponse(Physician p) {
+        return new PhysicianResponse(
                 p.getId(),
                 p.getName(),
                 p.getAvatar(),
                 p.getEmail(),
-                p.getIdentityDocument(),
                 p.getPhoneNumber(),
+                p.getSpecialty(),
+                p.getDocument(),
                 AddressMapper.mapToAddressResponse(p.getAddress())
         );
     }

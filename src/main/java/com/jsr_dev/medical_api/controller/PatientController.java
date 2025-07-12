@@ -1,6 +1,6 @@
 package com.jsr_dev.medical_api.controller;
 
-import com.jsr_dev.medical_api.patient.*;
+import com.jsr_dev.medical_api.domain.patient.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
