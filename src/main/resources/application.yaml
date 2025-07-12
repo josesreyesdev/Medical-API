@@ -24,3 +24,12 @@ server:
   # prevent the exception stack tracer
   error:
     include-stacktrace: never
+
+# Reduce the level of detail of Hibernate- and HikariCP-related logs
+logging:
+  level:
+    org:
+      hibernate: warn
+    com:
+      zaxxer:
+        hikari: warn
