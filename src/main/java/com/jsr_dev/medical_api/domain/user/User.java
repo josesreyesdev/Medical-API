@@ -24,5 +24,11 @@ public class User {
     private String email;
     private String password;
     private Boolean active;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_profiles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "profile_id")
+    )
     private List<Profile> profiles;
 }
