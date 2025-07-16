@@ -35,3 +35,7 @@ logging:
     com:
       zaxxer:
         hikari: warn
+
+# Config JWT
+jwt:
+  secret-key: ${JWT_KEY}
