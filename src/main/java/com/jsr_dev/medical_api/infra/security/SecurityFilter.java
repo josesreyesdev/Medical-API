@@ -12,6 +12,12 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
+    private final TokenService tokenService;
+
+    public SecurityFilter(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -27,7 +33,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
 
         String jwtToken = extractTokenValue(authHeader);
-        String email = "";
+        String email = tokenService.extractSubject(jwtToken);
+        System.out.println(email);
 
         filterChain.doFilter(request, response);
     }
@@ -39,5 +46,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     private boolean doesNotContainBearerToken(String header) {
         return header == null || !header.startsWith("Bearer ");
     }
+
 
 }
