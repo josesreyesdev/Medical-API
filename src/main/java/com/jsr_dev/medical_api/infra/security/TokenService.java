@@ -7,12 +7,15 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jsr_dev.medical_api.domain.user.User;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 
 @Service
 public class TokenService {
@@ -20,9 +23,15 @@ public class TokenService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+    private Algorithm algorithm;
+
+    @PostConstruct
+    public void init() {
+        this.algorithm = Algorithm.HMAC256(secretKey);
+    }
+
     public String generateToken(User user) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
             return JWT.create()
                     .withIssuer("jsr_dev")
                     .withSubject(user.getUsername())
@@ -44,7 +53,6 @@ public class TokenService {
 
     private DecodedJWT decodeToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
             JWTVerifier verifier = JWT
                     .require(algorithm)
                     .withIssuer("jsr_dev")
@@ -54,5 +62,16 @@ public class TokenService {
         } catch (JWTVerificationException ex) {
             throw new IllegalArgumentException("Invalid or Expired Token");
         }
+    }
+
+    public boolean isValid(String jwtToken, UserDetails foundUser) {
+        DecodedJWT decodedJWT = decodeToken(jwtToken);
+        String email = extractSubject(jwtToken);
+
+        return foundUser.getUsername().equals(email) && !isExpiredToken(decodedJWT);
+    }
+
+    private boolean isExpiredToken(DecodedJWT decodedJWT) {
+        return decodedJWT.getExpiresAt().before(new Date(System.currentTimeMillis()));
     }
 }

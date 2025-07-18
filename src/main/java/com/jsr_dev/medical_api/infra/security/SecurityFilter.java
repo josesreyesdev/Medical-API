@@ -1,9 +1,14 @@
 package com.jsr_dev.medical_api.infra.security;
 
+import com.jsr_dev.medical_api.domain.user.AuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,9 +18,14 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
+    private final AuthenticationService authenticationService;
 
-    public SecurityFilter(TokenService tokenService) {
+    public SecurityFilter(
+            TokenService tokenService,
+            AuthenticationService authenticationService
+    ) {
         this.tokenService = tokenService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -34,9 +44,16 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String jwtToken = extractTokenValue(authHeader);
         String email = tokenService.extractSubject(jwtToken);
-        System.out.println(email);
 
-        filterChain.doFilter(request, response);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails foundUser = authenticationService.loadUserByUsername(email);
+
+            if (tokenService.isValid(jwtToken, foundUser)) {
+                updateContext(foundUser, request);
+            }
+
+            filterChain.doFilter(request, response);
+        }
     }
 
     private String extractTokenValue(String header) {
@@ -47,5 +64,14 @@ public class SecurityFilter extends OncePerRequestFilter {
         return header == null || !header.startsWith("Bearer ");
     }
 
+    private void updateContext(UserDetails foundUser, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                foundUser,
+                null,
+                foundUser.getAuthorities()
+        );
 
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
 }
