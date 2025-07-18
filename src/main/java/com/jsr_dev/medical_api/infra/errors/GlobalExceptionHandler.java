@@ -4,6 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,4 +48,41 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    /* REVIEW ERRORS */
+    /*@ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<ErrorValidationData>> errorHandler400(MethodArgumentNotValidException ex) {
+        var errors = ex.getFieldErrors();
+        return ResponseEntity.badRequest().body(errors.stream().map(ErrorValidationData::new).toList());
+    }*/
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> errorHandler400(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<String> errorHandlerBadCredentials() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<String> errorHandlerAuthentication() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication Failure");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> errorHandlerDeniedAccess() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Denied access");
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> errorHandler500(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " +ex.getLocalizedMessage());
+    }
+
+    public record ErrorValidationData(String field, String message) {
+        public ErrorValidationData(FieldError error){
+            this(error.getField(), error.getDefaultMessage());
+        }
+    }
 }
