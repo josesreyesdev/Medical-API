@@ -23,17 +23,19 @@ public class TokenService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+    private String issuer;
     private Algorithm algorithm;
 
     @PostConstruct
     public void init() {
         this.algorithm = Algorithm.HMAC256(secretKey);
+        this.issuer = "jsr_dev";
     }
 
     public String generateToken(User user) {
         try {
             return JWT.create()
-                    .withIssuer("jsr_dev")
+                    .withIssuer(issuer)
                     .withSubject(user.getUsername())
                     .withClaim("id", user.getId())
                     .withExpiresAt(expirationDate())
@@ -55,7 +57,7 @@ public class TokenService {
         try {
             JWTVerifier verifier = JWT
                     .require(algorithm)
-                    .withIssuer("jsr_dev")
+                    .withIssuer(issuer)
                     .build();
 
             return verifier.verify(token);
