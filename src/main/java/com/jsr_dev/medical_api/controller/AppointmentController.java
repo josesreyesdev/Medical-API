@@ -16,7 +16,7 @@ public class AppointmentController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<AppointmentResponse> add(@RequestBody @Valid AddAppointmentRequest addConsultation) {
+    public ResponseEntity<AppointmentResponse> add(@RequestBody @Valid AddAppointmentRequest addAppointmentRequest) {
         return ResponseEntity.ok(new AppointmentResponse(null, null, null, null));
     }
 }
