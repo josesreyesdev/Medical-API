@@ -16,6 +16,7 @@ public record AddAppointmentRequest(
 
         @NotNull(message = "Is required")
         @Future(message = "Must be in the future")
-        LocalDateTime date
+        // @JsonFormat(pattern = "dd/MM/yyyy HH:mm") // custom date time format
+        LocalDateTime date // 2025-07-21T02:00
 ) {
 }
