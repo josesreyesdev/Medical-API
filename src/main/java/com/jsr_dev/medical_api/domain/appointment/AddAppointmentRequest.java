@@ -12,11 +12,10 @@ public record AddAppointmentRequest(
         Long idPatient,
 
         @JsonAlias({"idPhysician", "id_physician"})
-        Long idMedic,
+        Long idPhysician,
 
-        @JsonAlias({"date", "dateTime", "date_time"})
         @NotNull(message = "is required")
         @Future(message = "must be in the future")
-        LocalDateTime dateTime
+        LocalDateTime date
 ) {
 }
