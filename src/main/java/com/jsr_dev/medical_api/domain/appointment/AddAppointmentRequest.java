@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 
 public record AddAppointmentRequest(
         @JsonAlias({"idPatient", "id_patient"})
-        @NotNull(message = "is required")
+        @NotNull(message = "Is required")
         Long idPatient,
 
         @JsonAlias({"idPhysician", "id_physician"})
         Long idPhysician,
 
-        @NotNull(message = "is required")
-        @Future(message = "must be in the future")
+        @NotNull(message = "Is required")
+        @Future(message = "Must be in the future")
         LocalDateTime date
 ) {
 }
