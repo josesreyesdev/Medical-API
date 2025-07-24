@@ -1,11 +1,12 @@
 package com.jsr_dev.medical_api.domain.appointment;
 
-import com.jsr_dev.medical_api.domain.physician.Specialty;
-import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
 import com.jsr_dev.medical_api.domain.patient.Patient;
 import com.jsr_dev.medical_api.domain.patient.PatientRepository;
 import com.jsr_dev.medical_api.domain.physician.Physician;
 import com.jsr_dev.medical_api.domain.physician.PhysicianRepository;
+import com.jsr_dev.medical_api.domain.physician.Specialty;
+import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,18 +28,18 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
 
     public AppointmentResponse reserveAppointment(AddAppointmentRequest data) {
 
-        if (!patientRepository.existsById(data.idPatient())) {
-            throw new IntegrityValidationException("Patient (ID: "+ data.idPatient() +") does not exist in the database.");
+        if (!patientRepository.existsById(data.patientId())) {
+            throw new IntegrityValidationException("Patient (ID: " + data.patientId() + ") does not exist in the database.");
         }
 
-        Long physicianId = data.idPhysician();
-        if(physicianId != null && !physicianRepository.existsById(physicianId)) {
-            throw new IntegrityValidationException("Physician (ID: "+ physicianId +") does not exist in the database.");
+        Long physicianId = data.physicianId();
+        if (physicianId != null && !physicianRepository.existsById(physicianId)) {
+            throw new IntegrityValidationException("Physician (ID: " + physicianId + ") does not exist in the database.");
         }
 
         Physician physician = chooseAPhysician(data);
-        Patient patient = patientRepository.getReferenceById(data.idPatient());/*.orElseThrow(() ->
-                new IntegrityValidationException("Patient (ID: "+ data.idPatient() +") was not found in the database.")
+        Patient patient = patientRepository.getReferenceById(data.patientId());/*.orElseThrow(() ->
+                new IntegrityValidationException("Patient (ID: "+ data.patientId() +") was not found in the database.")
         );*/
 
         Appointment appointment = AppointmentMapper.toAppointment(physician, patient, data.date());
@@ -48,8 +49,8 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
     }
 
     private Physician chooseAPhysician(AddAppointmentRequest data) {
-        if (data.idPhysician() != null) {
-            return physicianRepository.getReferenceById(data.idPhysician());
+        if (data.physicianId() != null) {
+            return physicianRepository.getReferenceById(data.physicianId());
         }
         return findPhysician(data);
     }
@@ -57,12 +58,12 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
     private Physician validateAndGetPhysician(Long physicianId) {
         if (!physicianRepository.existsById(physicianId)) {
             throw new IntegrityValidationException(
-                    "The specified physician (ID: "+ physicianId +") does not exist in the database.");
+                    "The specified physician (ID: " + physicianId + ") does not exist in the database.");
         }
 
         if (!physicianRepository.findActiveById(physicianId)) {
             throw new IntegrityValidationException(
-                    "The specified physician (ID: "+ physicianId +") is not active in the database.");
+                    "The specified physician (ID: " + physicianId + ") is not active in the database.");
         }
 
         return physicianRepository.findById(physicianId)
@@ -77,5 +78,22 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
         }
         return physicianRepository.chooseARandomPhysicianAvailableOnTheDate(specialty, data.date())
                 .orElseThrow(() -> new IntegrityValidationException("No available physicians were found for the specified specialty and date"));
+    }
+
+    public void cancel(AppointmentCancellationRequest cancellation) {
+        Long appointmentId = cancellation.appointmentId();
+        if (!appointmentRepository.existsById(appointmentId)) {
+            throw new IntegrityValidationException("Patient (ID: " + appointmentId + ") does not exist in the database.");
+        }
+
+        Appointment appointment = appointmentRepository.getReferenceById(appointmentId);
+        appointment.cancel(cancellation.cancellationReason());
+    }
+
+    public AppointmentResponse getAppointmentById(Long appointmentId) {
+        if (!appointmentRepository.existsById(appointmentId)) {
+            throw new IntegrityValidationException("Appointment (ID: " + appointmentId + ") does not exist in the database.");
+        }
+        return AppointmentMapper.toAppointmentResponse(appointmentRepository.getReferenceById(appointmentId));
     }
 }

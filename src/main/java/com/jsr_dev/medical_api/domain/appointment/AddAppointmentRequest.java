@@ -8,12 +8,12 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record AddAppointmentRequest(
-        @JsonAlias({"idPatient", "id_patient"})
+        @JsonAlias({"patientId", "patient_id"})
         @NotNull(message = "Is required")
-        Long idPatient,
+        Long patientId,
 
-        @JsonAlias({"idPhysician", "id_physician"})
-        Long idPhysician,
+        @JsonAlias({"physicianId", "physician_id"})
+        Long physicianId,
 
         @NotNull(message = "Is required")
         @Future(message = "Must be in the future")

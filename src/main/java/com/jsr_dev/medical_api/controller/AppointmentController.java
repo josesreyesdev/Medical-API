@@ -1,15 +1,13 @@
 package com.jsr_dev.medical_api.controller;
 
-import com.jsr_dev.medical_api.domain.appointment.AddAppointmentRequest;
-import com.jsr_dev.medical_api.domain.appointment.AppointmentBookingService;
-import com.jsr_dev.medical_api.domain.appointment.AppointmentResponse;
+import com.jsr_dev.medical_api.domain.appointment.*;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/appointments")
@@ -24,12 +22,28 @@ public class AppointmentController {
     @PostMapping
     @Transactional
     public ResponseEntity<AppointmentResponse> add(
-            @RequestBody @Valid AddAppointmentRequest addAppointmentRequest
+            @RequestBody @Valid AddAppointmentRequest addAppointmentRequest,
+            UriComponentsBuilder uriComponentsBuilder
     ) {
-
-        AppointmentResponse response = appointmentBookingService
+        AppointmentResponse appointmentResponse = appointmentBookingService
                 .reserveAppointment(addAppointmentRequest);
 
-        return ResponseEntity.ok(response);
+        URI uri = uriComponentsBuilder.path("/appointments/{id}").buildAndExpand(appointmentResponse.id()).toUri();
+
+        return ResponseEntity.created(uri).body(appointmentResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AppointmentResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentBookingService.getAppointmentById(id));
+    }
+
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity<Boolean> delete(
+            @RequestBody @Valid AppointmentCancellationRequest cancellationRequest
+    ) {
+        appointmentBookingService.cancel(cancellationRequest);
+        return ResponseEntity.noContent().build();
     }
 }

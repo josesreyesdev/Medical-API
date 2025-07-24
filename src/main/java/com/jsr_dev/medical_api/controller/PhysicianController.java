@@ -66,7 +66,6 @@ public class PhysicianController {
     @GetMapping("/{id}")
     public ResponseEntity<PhysicianResponse> getPhysicianById(@PathVariable Long id) {
         Physician physician = repository.getReferenceById(id);
-        physician.deactivate();
 
         return ResponseEntity.ok(PhysicianMapper.mapToPhysicianResponse(physician)); // 200
     }

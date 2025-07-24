@@ -11,7 +11,9 @@ public class AppointmentMapper {
                 null,
                 physician,
                 patient,
-                date
+                date,
+                null,
+                null
         );
     }
 

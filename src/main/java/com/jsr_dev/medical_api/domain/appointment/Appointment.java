@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 public class Appointment {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,4 +31,16 @@ public class Appointment {
     private Patient patient;
 
     private LocalDateTime date;
+
+    @Column(name = "cancellation_reason")
+    @Enumerated(EnumType.STRING)
+    private CancellationReason cancellationReason;
+
+    @Column(name = "cancellation_date")
+    private LocalDateTime cancellationDate;
+
+    public void cancel(CancellationReason cancellationReason) {
+        this.cancellationReason = cancellationReason;
+        this.cancellationDate = LocalDateTime.now();
+    }
 }
