@@ -12,8 +12,6 @@ public interface PhysicianRepository extends JpaRepository<Physician, Long> {
 
     Page<Physician> findAllByActiveTrue(Pageable pageable);
 
-    boolean findActiveById(Long idPhysician);
-
     @Query(
             """
             SELECT p FROM Physician p
@@ -28,4 +26,10 @@ public interface PhysicianRepository extends JpaRepository<Physician, Long> {
         """
     )
     Optional<Physician> chooseARandomPhysicianAvailableOnTheDate(Specialty specialty, LocalDateTime date);
+
+    @Query("""
+            SELECT p.active FROM Physician p
+            WHERE p.id = :physicianId
+            """)
+    Boolean findActiveById(Long physicianId);
 }

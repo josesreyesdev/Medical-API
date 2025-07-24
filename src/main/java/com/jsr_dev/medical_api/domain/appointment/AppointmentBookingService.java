@@ -6,7 +6,6 @@ import com.jsr_dev.medical_api.domain.physician.Physician;
 import com.jsr_dev.medical_api.domain.physician.PhysicianRepository;
 import com.jsr_dev.medical_api.domain.physician.Specialty;
 import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,22 +52,6 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
             return physicianRepository.getReferenceById(data.physicianId());
         }
         return findPhysician(data);
-    }
-
-    private Physician validateAndGetPhysician(Long physicianId) {
-        if (!physicianRepository.existsById(physicianId)) {
-            throw new IntegrityValidationException(
-                    "The specified physician (ID: " + physicianId + ") does not exist in the database.");
-        }
-
-        if (!physicianRepository.findActiveById(physicianId)) {
-            throw new IntegrityValidationException(
-                    "The specified physician (ID: " + physicianId + ") is not active in the database.");
-        }
-
-        return physicianRepository.findById(physicianId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Physician disappeared after validation")); // Theoretically impossible case
     }
 
     private Physician findPhysician(AddAppointmentRequest data) {
