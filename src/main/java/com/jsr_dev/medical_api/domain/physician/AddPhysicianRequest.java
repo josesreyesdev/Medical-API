@@ -9,28 +9,28 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record AddPhysicianRequest(
-        @NotBlank(message = "Name must not be empty.")
+        @NotBlank(message = "Is required")
         String name,
 
         String avatar,
 
-        @NotBlank(message = "Email must not be empty.")
-        @Email(message = "Email must be a valid format.")
+        @NotBlank(message = "Is required")
+        @Email(message = "Must be a valid format.")
         String email,
 
         @JsonAlias({"phoneNumber", "phone_number"})
-        @NotBlank(message = "Phone number must not be empty.")
+        @NotBlank(message = "Is required")
         String phoneNumber,
 
-        @NotBlank(message = "Document must not be empty.")
-        @Pattern(regexp = "\\d{7,9}", message = "Document must contain between 7 and 9 digits.")
+        @NotBlank(message = "Is required")
+        @Pattern(regexp = "\\d{7,9}", message = "Must contain between 7 and 9 digits.")
         String document,
 
-        @NotNull(message = "Specialty must not be null")
+        @NotNull(message = "Is required")
         Specialty specialty,
 
         @JsonAlias("address")
-        @NotNull(message = "Address must no be null")
+        @NotNull(message = "Is required")
         @Valid
         AddAddressRequest addAddressRequest
 ) {

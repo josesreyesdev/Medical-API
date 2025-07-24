@@ -27,7 +27,6 @@ public class Physician {
     private Address address;
     private Boolean active;
 
-
     public void update(UpdatePhysicianRequest update) {
         if (update.name() != null) this.name = update.name();
         if (update.avatar() != null) this.avatar = update.avatar();
