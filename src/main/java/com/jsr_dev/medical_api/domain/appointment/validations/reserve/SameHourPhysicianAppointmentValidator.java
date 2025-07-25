@@ -3,7 +3,9 @@ package com.jsr_dev.medical_api.domain.appointment.validations.reserve;
 import com.jsr_dev.medical_api.domain.appointment.AddAppointmentRequest;
 import com.jsr_dev.medical_api.domain.appointment.AppointmentRepository;
 import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SameHourPhysicianAppointmentValidator implements AppointmentValidator{
     /*
      * No permita reservar mas de una cita en la misma hora para el mismo medico

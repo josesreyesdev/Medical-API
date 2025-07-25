@@ -3,9 +3,11 @@ package com.jsr_dev.medical_api.domain.appointment.validations.reserve;
 import com.jsr_dev.medical_api.domain.appointment.AddAppointmentRequest;
 import com.jsr_dev.medical_api.domain.appointment.AppointmentRepository;
 import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Component
 public class SameDayPatientAppointmentValidator implements AppointmentValidator{
     /*
     * No permita reservar mas de una consulta en el mismo día para el mismo paciente

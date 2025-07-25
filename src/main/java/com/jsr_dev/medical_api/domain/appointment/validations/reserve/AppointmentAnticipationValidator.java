@@ -2,10 +2,12 @@ package com.jsr_dev.medical_api.domain.appointment.validations.reserve;
 
 import com.jsr_dev.medical_api.domain.appointment.AddAppointmentRequest;
 import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@Component
 public class AppointmentAnticipationValidator implements AppointmentValidator{
     /*
      * The appointment reservation, it cannot be less than 30 minutes.
