@@ -1,7 +1,9 @@
 package com.jsr_dev.medical_api.infra.errors;
 
+import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,7 +22,10 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiErrorValidation> errorHandler404(EntityNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorValidation> errorHandler404(
+            EntityNotFoundException ex,
+            HttpServletRequest request
+    ) {
         ApiErrorValidation error = new ApiErrorValidation(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
@@ -32,7 +37,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorValidation> errorHandler400(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorValidation> errorHandler400(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
         List<FieldError> errors = ex.getFieldErrors();
         List<FieldErrorValidation> fieldErrors = errors.stream()
                 .map(FieldErrorValidation::new)
@@ -75,13 +83,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Denied access");
     }
 
+    @ExceptionHandler(IntegrityValidationException.class)
+    public ResponseEntity<String> errorHandlerValidationIntegrity403(IntegrityValidationException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> errorHandlerBussinessRulesValidation403(ValidationException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> errorHandler500(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " +ex.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + ex.getLocalizedMessage());
     }
 
     public record ErrorValidationData(String field, String message) {
-        public ErrorValidationData(FieldError error){
+        public ErrorValidationData(FieldError error) {
             this(error.getField(), error.getDefaultMessage());
         }
     }

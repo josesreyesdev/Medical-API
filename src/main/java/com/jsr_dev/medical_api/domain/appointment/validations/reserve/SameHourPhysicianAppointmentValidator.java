@@ -21,7 +21,7 @@ public class SameHourPhysicianAppointmentValidator implements AppointmentValidat
     @Override
     public void validate(AddAppointmentRequest data) {
         Boolean isPhysicianAppointmentInTheSameHour = appointmentRepository
-                .existByPhysicianIdAndDate(data.physicianId(), data.date());
+                .existsByPhysicianIdAndDate(data.physicianId(), data.date());
 
         if (isPhysicianAppointmentInTheSameHour) {
             throw new IntegrityValidationException("The physician already has an active appointment on the same date and time.");

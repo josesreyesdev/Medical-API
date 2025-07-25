@@ -7,6 +7,7 @@ import com.jsr_dev.medical_api.domain.physician.Physician;
 import com.jsr_dev.medical_api.domain.physician.PhysicianRepository;
 import com.jsr_dev.medical_api.domain.physician.Specialty;
 import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
+import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,7 +75,7 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
             throw new IntegrityValidationException("A specialty is required when a physician id is not provided.");
         }
         return physicianRepository.chooseARandomPhysicianAvailableOnTheDate(specialty, data.date())
-                .orElseThrow(() -> new IntegrityValidationException("No available physicians were found for the specified specialty and date"));
+                .orElseThrow(() -> new ValidationException("No available physicians were found for the specified specialty: "+ specialty +" and date"));
     }
 
     public void cancel(AppointmentCancellationRequest cancellation) {

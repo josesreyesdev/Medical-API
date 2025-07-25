@@ -8,5 +8,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     Boolean existsByPatientIdAndDateBetween(Long patientId, LocalDateTime firstSchedule, LocalDateTime lastSchedule);
 
-    Boolean existByPhysicianIdAndDate(Long physicianId, LocalDateTime date);
+    Boolean existsByPhysicianIdAndDate(Long physicianId, LocalDateTime date);
 }
