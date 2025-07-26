@@ -7,9 +7,26 @@ import java.time.LocalDateTime;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    Boolean existsByPatientIdAndDateBetween(Long patientId, LocalDateTime firstSchedule, LocalDateTime lastSchedule);
+    @Query("""
+                SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+                FROM Appointment a
+                WHERE a.patient.id = :patientId
+                  AND a.cancellationReason IS NULL
+                  AND a.date BETWEEN :start AND :end
+            """)
+    Boolean existsActivePatientAppointmentInRange(Long patientId, LocalDateTime start, LocalDateTime end);
 
-    Boolean existsByPhysicianIdAndDate(Long physicianId, LocalDateTime date);
+
+    //Boolean existsByPhysicianIdAndDateAndCancellationReasonIsNull(Long physicianId, LocalDateTime date);
+    @Query("""
+                SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+                FROM Appointment a
+                WHERE a.physician.id = :physicianId
+                  AND a.cancellationReason IS NULL
+                  AND a.date BETWEEN :start AND :end
+            """)
+    Boolean existsPhysicianAppointmentInRange(Long physicianId, LocalDateTime start, LocalDateTime end);
+
 
     @Query("""
             SELECT CASE WHEN a.cancellationReason IS NOT NULL THEN true ELSE false

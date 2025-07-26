@@ -39,12 +39,12 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
     public AppointmentResponse reserveAppointment(AddAppointmentRequest data) {
         Long patientId = data.patientId();
         if (!patientRepository.existsById(patientId)) {
-            throw new IntegrityValidationException("Patient (ID: " + patientId + ") does not exist in the database.");
+            throw new IntegrityValidationException("Patient (ID: " + patientId + ") does not exist.");
         }
 
         Long physicianId = data.physicianId();
         if (physicianId != null && !physicianRepository.existsById(physicianId)) {
-            throw new IntegrityValidationException("Physician (ID: " + physicianId + ") does not exist in the database.");
+            throw new IntegrityValidationException("Physician (ID: " + physicianId + ") does not exist.");
         }
 
         /*
@@ -58,7 +58,7 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
 
         Physician physician = chooseAPhysician(data);
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new IntegrityValidationException("Patient (ID: " + patientId + ") was not found in the database."));
+                .orElseThrow(() -> new IntegrityValidationException("Patient (ID: " + patientId + ") was not found."));
 
         Appointment appointment = AppointmentMapper.toAppointment(physician, patient, data.date());
         appointmentRepository.save(appointment);
@@ -85,7 +85,7 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
     public void cancel(AppointmentCancellationRequest data) {
         Long appointmentId = data.appointmentId();
         if (!appointmentRepository.existsById(appointmentId)) {
-            throw new IntegrityValidationException("Patient (ID: " + appointmentId + ") does not exist in the database.");
+            throw new IntegrityValidationException("Patient (ID: " + appointmentId + ") does not exist.");
         }
 
         if (appointmentRepository.isAppointmentCancelled(appointmentId)) {
@@ -96,13 +96,13 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
         cancellationValidators.forEach(v -> v.validate(data));
 
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() ->
-                new IntegrityValidationException("Appointment (ID: " + appointmentId + ") was not found in the database."));
+                new IntegrityValidationException("Appointment (ID: " + appointmentId + ") was not found."));
         appointment.cancel(data.cancellationReason());
     }
 
     public AppointmentResponse getAppointmentById(Long appointmentId) {
         if (!appointmentRepository.existsById(appointmentId)) {
-            throw new IntegrityValidationException("Appointment (ID: " + appointmentId + ") does not exist in the database.");
+            throw new IntegrityValidationException("Appointment (ID: " + appointmentId + ") does not exist.");
         }
         return AppointmentMapper.toAppointmentResponse(appointmentRepository.getReferenceById(appointmentId));
     }
