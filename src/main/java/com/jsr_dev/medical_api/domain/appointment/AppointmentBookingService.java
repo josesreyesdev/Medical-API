@@ -1,5 +1,6 @@
 package com.jsr_dev.medical_api.domain.appointment;
 
+import com.jsr_dev.medical_api.domain.appointment.validations.cancel.AppointmentCancellationValidator;
 import com.jsr_dev.medical_api.domain.appointment.validations.reserve.AppointmentValidator;
 import com.jsr_dev.medical_api.domain.patient.Patient;
 import com.jsr_dev.medical_api.domain.patient.PatientRepository;
@@ -19,17 +20,20 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
     private final PhysicianRepository physicianRepository;
     private final PatientRepository patientRepository;
     private final List<AppointmentValidator> validators;
+    private final List<AppointmentCancellationValidator> cancellationValidators;
 
     public AppointmentBookingService(
             AppointmentRepository appointmentRepository,
             PhysicianRepository physicianRepository,
             PatientRepository patientRepository,
-            List<AppointmentValidator> validators
+            List<AppointmentValidator> validators,
+            List<AppointmentCancellationValidator> cancellationValidators
     ) {
         this.appointmentRepository = appointmentRepository;
         this.physicianRepository = physicianRepository;
         this.patientRepository = patientRepository;
         this.validators = validators;
+        this.cancellationValidators = cancellationValidators;
     }
 
     public AppointmentResponse reserveAppointment(AddAppointmentRequest data) {
@@ -54,7 +58,7 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
 
         Physician physician = chooseAPhysician(data);
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new IntegrityValidationException("Patient (ID: "+ patientId +") was not found in the database."));
+                .orElseThrow(() -> new IntegrityValidationException("Patient (ID: " + patientId + ") was not found in the database."));
 
         Appointment appointment = AppointmentMapper.toAppointment(physician, patient, data.date());
         appointmentRepository.save(appointment);
@@ -75,17 +79,25 @@ public class AppointmentBookingService { /* AppointmentValidationService, Appoin
             throw new IntegrityValidationException("A specialty is required when a physician id is not provided.");
         }
         return physicianRepository.chooseARandomPhysicianAvailableOnTheDate(specialty, data.date())
-                .orElseThrow(() -> new ValidationException("No available physicians were found for the specified specialty: "+ specialty +" and date"));
+                .orElseThrow(() -> new ValidationException("No available physicians were found for the specified specialty: " + specialty + " and date"));
     }
 
-    public void cancel(AppointmentCancellationRequest cancellation) {
-        Long appointmentId = cancellation.appointmentId();
+    public void cancel(AppointmentCancellationRequest data) {
+        Long appointmentId = data.appointmentId();
         if (!appointmentRepository.existsById(appointmentId)) {
             throw new IntegrityValidationException("Patient (ID: " + appointmentId + ") does not exist in the database.");
         }
 
-        Appointment appointment = appointmentRepository.getReferenceById(appointmentId);
-        appointment.cancel(cancellation.cancellationReason());
+        if (appointmentRepository.isAppointmentCancelled(appointmentId)) {
+            throw new IntegrityValidationException("Appointment (ID: " + appointmentId + ") was already canceled.");
+        }
+
+        // Validators -> applied SOLID principles and strategy pattern
+        cancellationValidators.forEach(v -> v.validate(data));
+
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() ->
+                new IntegrityValidationException("Appointment (ID: " + appointmentId + ") was not found in the database."));
+        appointment.cancel(data.cancellationReason());
     }
 
     public AppointmentResponse getAppointmentById(Long appointmentId) {
