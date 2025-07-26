@@ -5,6 +5,8 @@ import com.jsr_dev.medical_api.domain.appointment.AppointmentRepository;
 import com.jsr_dev.medical_api.infra.exceptions.IntegrityValidationException;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class SameHourPhysicianAppointmentValidator implements AppointmentValidator{
     /*
@@ -20,11 +22,23 @@ public class SameHourPhysicianAppointmentValidator implements AppointmentValidat
 
     @Override
     public void validate(AddAppointmentRequest data) {
+        /*
         Boolean isPhysicianAppointmentInTheSameHour = appointmentRepository
-                .existsByPhysicianIdAndDate(data.physicianId(), data.date());
+                .existsByPhysicianIdAndDateAndCancellationReasonIsNull(data.physicianId(), data.date());
 
         if (isPhysicianAppointmentInTheSameHour) {
             throw new IntegrityValidationException("The physician already has an active appointment on the same date and time.");
+        }*/
+
+        LocalDateTime appointmentDate = data.date();
+        LocalDateTime startRange = appointmentDate.minusHours(1);
+        LocalDateTime endRange = appointmentDate.plusHours(1);
+
+        Boolean isPhysicianBusy = appointmentRepository
+                .existsPhysicianAppointmentInRange(data.physicianId(), startRange, endRange);
+
+        if (isPhysicianBusy) {
+            throw new IntegrityValidationException("The physician already has an appointment within one hour of the requested time.");
         }
     }
 }

@@ -20,6 +20,7 @@ public interface PhysicianRepository extends JpaRepository<Physician, Long> {
             AND p.id NOT IN(
                 SELECT a.physician.id FROM Appointment a
                 WHERE a.date = :date
+                AND a.cancellationReason IS NULL
             )
             ORDER BY rand()
             LIMIT 1
