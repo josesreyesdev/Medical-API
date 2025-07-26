@@ -22,13 +22,14 @@ public class SameDayPatientAppointmentValidator implements AppointmentValidator{
 
     @Override
     public void validate(AddAppointmentRequest data) {
-        LocalDateTime firstSchedule = data.date().withHour(7);
-        LocalDateTime lastSchedule = data.date().withHour(18);
 
-        Boolean patientWithAppointment = appointmentRepository
-                .existsByPatientIdAndDateBetween(data.patientId(), firstSchedule, lastSchedule);
+        LocalDateTime firstSchedule = data.date().withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime lastSchedule = data.date().withHour(23).withMinute(59).withSecond(59);
 
-        if (patientWithAppointment) {
+        Boolean patientHasActiveAppointment = appointmentRepository
+                .existsActivePatientAppointmentInRange(data.patientId(), firstSchedule, lastSchedule);
+
+        if (patientHasActiveAppointment) {
             throw new IntegrityValidationException("The patient already has an active appointment for this day.");
         }
     }
