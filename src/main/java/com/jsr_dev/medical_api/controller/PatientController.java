@@ -1,6 +1,7 @@
 package com.jsr_dev.medical_api.controller;
 
 import com.jsr_dev.medical_api.domain.patient.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/patients")
+@SecurityRequirement(name = "bearer-key")
 public class PatientController {
 
     private final PatientRepository repository;

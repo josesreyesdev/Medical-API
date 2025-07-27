@@ -1,6 +1,7 @@
 package com.jsr_dev.medical_api.controller;
 
 import com.jsr_dev.medical_api.domain.appointment.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/appointments")
+@SecurityRequirement(name = "bearer-key")
 public class AppointmentController {
 
     private final AppointmentBookingService appointmentBookingService;
