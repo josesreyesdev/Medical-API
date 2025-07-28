@@ -1,0 +1,12 @@
+# database
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/medical_db_test?createDatabaseIfNotExist=true&serverTimezone=UTC
+
+###  CONFIG DB IN MEMORY  ###
+#1.-  Borrar este archivo si configuramos la bd en memoria a menos que configuramos la db manualmente
+#2.- Borrar estas dos anotaciones en el PhysicianRepositoryTest, ya que utilizaremos en la memoria, y active
+#    profiles lo dejamos solo si dejamos este archivo.
+#@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+#@ActiveProfiles("test")
+###
