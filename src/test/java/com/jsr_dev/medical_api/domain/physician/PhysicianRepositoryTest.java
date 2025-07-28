@@ -62,6 +62,32 @@ class PhysicianRepositoryTest {
         assertThat(availablePhysician).isNull();
     }
 
+    @Test
+    @DisplayName("Returns the physician available on that appointment date.")
+    void chooseARandomPhysicianAvailableOnTheDateScenario2() {
+        // GIVEN
+        LocalDateTime nexMondayAt10H = LocalDate.now()
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                .atTime(10, 0); // 10 am
+
+        /* add physician in Database*/
+        Physician physician = addPhysician(
+                "Juan Physician 2",
+                "juan-physician-2@example.com",
+                "12444",
+                Specialty.DERMATOLOGY
+        );
+
+        // WHEN
+        // Physician is available
+        Physician availablePhysician = physicianRepository
+                .chooseARandomPhysicianAvailableOnTheDate(Specialty.DERMATOLOGY, nexMondayAt10H)
+                .orElse(null);
+
+        // THEN
+        assertThat(availablePhysician).isEqualTo(physician);
+    }
+
     private void addAppointment(Physician physician, Patient patient, LocalDateTime date) {
         entityManager.persist(AppointmentMapper.toAppointment(physician, patient, date));
     }
