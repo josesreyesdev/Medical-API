@@ -45,7 +45,7 @@ public enum CancellationReason {
         throw new IllegalArgumentException("Cancellation Reason: " + cancellationReason + " not found in enum class");
     }
 
-    private static String normalize(String input) {
+    public static String normalize(String input) {
         return Normalizer.normalize(input, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "")
                 .toLowerCase();
