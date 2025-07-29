@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureJsonTesters // Simulate JSON requests and responses
 class AppointmentControllerTest {
 
-
     @Autowired
     private MockMvc mockMvc;
 
