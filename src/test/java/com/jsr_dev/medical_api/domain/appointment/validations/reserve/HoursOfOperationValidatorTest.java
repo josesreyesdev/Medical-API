@@ -9,9 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.Year;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class HoursOfOperationValidatorTest {
@@ -47,4 +48,15 @@ class HoursOfOperationValidatorTest {
         assertThatThrownBy(() -> validator.validate(request))
                 .isInstanceOf(IntegrityValidationException.class);
     }
+
+    @Test
+    void shouldNotThrowExceptionIfAppointmentIsAtOpeningHour() {
+        LocalDateTime valid = LocalDateTime.of(2030, 7, 25, 7, 0); // Wednesday
+        AddAppointmentRequest request = new AddAppointmentRequest(1L, 1L, valid, Specialty.CARDIOLOGY);
+
+        assertThatCode(() -> validator.validate(request))
+                .doesNotThrowAnyException();
+    }
+
+    
 }
