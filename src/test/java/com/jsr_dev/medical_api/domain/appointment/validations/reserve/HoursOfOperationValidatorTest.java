@@ -38,4 +38,13 @@ class HoursOfOperationValidatorTest {
         assertThatThrownBy(() -> validator.validate(request))
                 .isInstanceOf(IntegrityValidationException.class);
     }
+
+    @Test
+    void shouldThrowExceptionIfAppointmentIsAfterClosingHour() {
+        LocalDateTime late = LocalDateTime.of(2030, 12, 27, 18, 1); // Friday
+        AddAppointmentRequest request = new AddAppointmentRequest(1L, 1L, late, Specialty.CARDIOLOGY);
+
+        assertThatThrownBy(() -> validator.validate(request))
+                .isInstanceOf(IntegrityValidationException.class);
+    }
 }
