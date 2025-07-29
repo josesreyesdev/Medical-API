@@ -1,0 +1,20 @@
+# Properties spring boot https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+
+spring:
+  # database
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+
+  # show stack trace and format sql details
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+# path
+server:
+  servlet:
+    context-path: /api

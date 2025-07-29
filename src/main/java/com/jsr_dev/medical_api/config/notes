@@ -1,0 +1,8 @@
+# Borrar migracion fallida
+delete from flyway_schema_history where success = 0;
+
+# Agregar nueva version de migraciones
+Vn__alter-table-table-name.sql
+ =>Vn__alter-table-table_name-add-colum-column_name.sql not null
+
+# Disponibilizar el proyecto
