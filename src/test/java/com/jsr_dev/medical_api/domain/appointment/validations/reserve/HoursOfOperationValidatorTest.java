@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.Year;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -58,5 +57,13 @@ class HoursOfOperationValidatorTest {
                 .doesNotThrowAnyException();
     }
 
-    
+    @Test
+    void shouldNotThrowExceptionIfAppointmentIsAtClosingHour() {
+        LocalDateTime valid = LocalDateTime.of(2030, 12, 28, 18, 0); // Saturday
+        AddAppointmentRequest request = new AddAppointmentRequest(1L, 1L, valid, Specialty.CARDIOLOGY);
+
+        assertThatCode(() -> validator.validate(request))
+                .doesNotThrowAnyException();
+    }
+
 }
