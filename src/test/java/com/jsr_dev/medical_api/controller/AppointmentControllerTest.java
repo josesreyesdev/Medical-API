@@ -30,14 +30,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureJsonTesters // Simulate JSON requests and responses
 class AppointmentControllerTest {
 
+
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private JacksonTester<AddAppointmentRequest> addAppointmentRequestJson;
+    private JacksonTester<AddAppointmentRequest> requestJacksonTester;
 
     @Autowired
-    private JacksonTester<AppointmentResponse> appointmentResponseJson;
+    private JacksonTester<AppointmentResponse> responseJacksonTester;
 
     @MockitoBean // Skip interaction with db
     private AppointmentBookingService appointmentBookingService;
@@ -70,14 +71,14 @@ class AppointmentControllerTest {
 
         MockHttpServletResponse response = mockMvc.perform(post("/appointments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(addAppointmentRequestJson.write(request).getJson())
+                        .content(requestJacksonTester.write(request).getJson())
                 ).andReturn().getResponse();
 
         // THEN
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 
         // Verify expected JSON
-        String expectedJSON = appointmentResponseJson.write(appointmentResponse).getJson();
+        String expectedJSON = responseJacksonTester.write(appointmentResponse).getJson();
         assertThat(response.getContentAsString()).isEqualTo(expectedJSON);
 
         // Verify location header
