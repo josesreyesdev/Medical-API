@@ -8,8 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class HoursOfOperationValidatorTest {
@@ -18,11 +20,22 @@ class HoursOfOperationValidatorTest {
 
     @Test
     void shouldThrowExceptionIfAppointmentIsOnSunday() {
+        // Arrange
         LocalDateTime sunday = LocalDateTime.of(2030, 12, 29, 10, 0); // Sunday
         AddAppointmentRequest request = new AddAppointmentRequest(1L, 1L, sunday, Specialty.CARDIOLOGY);
 
+        // Act and Assert
         assertThatThrownBy(() -> validator.validate(request))
                 .isInstanceOf(IntegrityValidationException.class)
                 .hasMessageContaining("Opening hours are");
+    }
+
+    @Test
+    void shouldThrowExceptionIfAppointmentIsBeforeOpeningHour() {
+        LocalDateTime early = LocalDateTime.of(2030, Month.DECEMBER, 27, 6, 59); // Friday
+        AddAppointmentRequest request = new AddAppointmentRequest(1L, 1L, early, Specialty.CARDIOLOGY);
+
+        assertThatThrownBy(() -> validator.validate(request))
+                .isInstanceOf(IntegrityValidationException.class);
     }
 }
