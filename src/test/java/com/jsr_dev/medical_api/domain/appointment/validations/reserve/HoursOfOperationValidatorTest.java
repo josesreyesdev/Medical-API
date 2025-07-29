@@ -66,4 +66,12 @@ class HoursOfOperationValidatorTest {
                 .doesNotThrowAnyException();
     }
 
+    @Test
+    void shouldNotThrowExceptionIfAppointmentIsWithinWorkingHours() {
+        LocalDateTime valid = LocalDateTime.of(2030, Month.DECEMBER, 28, 10, 30); // Saturday
+        AddAppointmentRequest request = new AddAppointmentRequest(1L, 1L, valid, Specialty.CARDIOLOGY);
+
+        assertThatCode(() -> validator.validate(request))
+                .doesNotThrowAnyException();
+    }
 }
