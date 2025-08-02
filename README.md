@@ -77,12 +77,12 @@ The documentation of the application's features can be accessed at this link: [T
    ```
 4. **Build and run the application**
     ```bash
-   ./gradlew bootRun
+   ./mvnw spring-boot:run
    ```
    Alternatively, you can build the JAR file and run it:
     ```bash
-   ./gradlew build
-   java -jar build/libs/medical-api-0.0.1-SNAPSHOT.jar
+   ./mvnw clean package
+   java -jar target/medical-api-0.0.1-SNAPSHOT.jar
    ```
    The application should now be running at `http://localhost:8080/api/`.
 5. **Access API Documentation**
